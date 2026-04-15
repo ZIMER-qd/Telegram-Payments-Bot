@@ -1,7 +1,12 @@
 import asyncio
 import logging
+from shutil import ExecError
 from aiogram import Dispatcher, types
 from app.services.bot_instance import bot
+
+from app.handlers.bot_commands import router as commands_router
+
+from app.database.models import async_main
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -18,8 +23,14 @@ async def set_commands():
 
 
 async def main():
-    
-    dp.include_routers()
+    try:
+        await async_main()
+    except Exception as e:
+        logging.warning(f"Database initialization failed: {e}")
+
+    dp.include_routers(
+        commands_router,
+    )
 
     await set_commands()
     await bot.delete_webhook(drop_pending_updates=True)

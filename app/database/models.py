@@ -1,7 +1,8 @@
-from sqlalchemy import BigInteger, String, ForeignKey
+from sqlalchemy import BigInteger, String, ForeignKey, DateTime, Numeric
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 BASE = Path.cwd()
@@ -21,4 +22,37 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     name: Mapped[str] = mapped_column(String(50))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), 
+                                                 default=lambda: datetime.now(timezone.utc))
+
+
+class Subscription(Base):
+    __tablename__ = 'Subscriptions'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('Users.id'))
+    expire_at: Mapped[datetime] = mapped_column(DateTime())
+
+
+class Product(Base):
+    __tablename__ = 'Products'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50))
+    type: Mapped[str] = mapped_column(String(50))
+    price: Mapped[int] = mapped_column(Numeric(10, 2))
+
+
+class UserProduct(Base):
+    __tablename__ = 'User Products'
     
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('Users.id'))
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.id'))
+    purchased_at: Mapped[datetime] = mapped_column(DateTime())
+    expires_at: Mapped[datetime] = mapped_column(DateTime())
+
+
+async def async_main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
