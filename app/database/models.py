@@ -38,6 +38,7 @@ class Product(Base):
     __tablename__ = 'Products'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(30))
     name: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(50))
     price: Mapped[int] = mapped_column(Numeric(10, 2))
@@ -50,9 +51,9 @@ class UserProduct(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('Users.id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.id'))
     purchased_at: Mapped[datetime] = mapped_column(DateTime())
-    expires_at: Mapped[datetime] = mapped_column(DateTime())
+    expire_at: Mapped[datetime] = mapped_column(DateTime())
 
 
-async def async_main():
+async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

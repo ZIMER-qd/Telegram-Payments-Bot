@@ -6,7 +6,7 @@ from app.services.bot_instance import bot
 
 from app.handlers.bot_commands import router as commands_router
 
-from app.database.models import async_main
+from app.database.models import init_db
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -24,7 +24,7 @@ async def set_commands():
 
 async def main():
     try:
-        await async_main()
+        await init_db()
     except Exception as e:
         logging.warning(f"Database initialization failed: {e}")
 
