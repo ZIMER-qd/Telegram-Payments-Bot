@@ -1,13 +1,14 @@
 import asyncio
 import logging
-from shutil import ExecError
 from aiogram import Dispatcher, types
 from app.services.bot_instance import bot
 
 from app.handlers.bot_commands import router as commands_router
+from app.callbacks.callback_messages import router as callback_router
 
 from app.database.models import init_db
-
+from app.database.create_products import seed_products
+from app.database.seed import products
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -28,8 +29,11 @@ async def main():
     except Exception as e:
         logging.warning(f"Database initialization failed: {e}")
 
+    await seed_products(products)
+
     dp.include_routers(
         commands_router,
+        callback_router
     )
 
     await set_commands()

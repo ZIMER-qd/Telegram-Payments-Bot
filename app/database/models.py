@@ -50,8 +50,9 @@ class UserProduct(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('Users.id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.id'))
-    purchased_at: Mapped[datetime] = mapped_column(DateTime())
-    expire_at: Mapped[datetime] = mapped_column(DateTime())
+    purchased_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                   default=lambda: datetime.now(timezone.utc))
+    expire_at: Mapped[datetime] = mapped_column(DateTime(), nullable=True)
 
 
 async def init_db():
