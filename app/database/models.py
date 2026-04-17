@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String, ForeignKey, DateTime, Numeric
+from sqlalchemy import BigInteger, String, ForeignKey, DateTime, Numeric, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
@@ -34,6 +34,7 @@ class Product(Base):
     name: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(50))
     price: Mapped[int] = mapped_column(Numeric(10, 2))
+    duration_days: Mapped[int] = mapped_column(Integer, nullable=True)
 
 
 class UserProduct(Base):

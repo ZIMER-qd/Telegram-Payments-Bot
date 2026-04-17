@@ -5,6 +5,7 @@ from app.services.bot_instance import bot
 
 from app.handlers.bot_commands import router as commands_router
 from app.callbacks.callback_messages import router as callback_router
+from app.handlers.bot_answers import router as answer_router
 
 from app.database.models import init_db
 from app.database.create_products import seed_products
@@ -33,7 +34,8 @@ async def main():
 
     dp.include_routers(
         commands_router,
-        callback_router
+        callback_router,
+        answer_router
     )
 
     await set_commands()
