@@ -4,7 +4,6 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram import Bot, Router, F
 from aiogram.types import CallbackQuery, LabeledPrice
 
-from app.utils.create_invite_link import create_link
 from app.database import requests as rq
 from app.keyboards import inline
 
@@ -13,11 +12,12 @@ from config import config
 router = Router()
 
 
-# @router.callback_query(F.data == 'channel')
-# async def give_private_channel(query: CallbackQuery):
-#     invite = await create_link(query.bot)
-#     await rq.add_user_product(query.from_user.id, "private_channel_1")
-#     await query.message.answer(f"Ваша ссылка на канал:\n\n{invite}")
+@router.callback_query(F.data == 'back')
+async def get_back(query: CallbackQuery):
+    text = "Здравствуйте\n\n" \
+           "Это тестовый бот <b>Payments</b>\n" \
+           "Какие есть возможности:\n"
+    await query.message.edit_text(text, reply_markup=inline.premium)
 
 
 @router.callback_query(inline.ProductType.filter())
@@ -46,5 +46,5 @@ async def give_invoice(query: CallbackQuery, callback_data: inline.ProductCode, 
         payload=product.code,
         provider_token=config.provider_token.get_secret_value(),
         currency='UAH',
-        prices=[LabeledPrice(label=product.name, amount=product.price * 100)]
+        prices=[LabeledPrice(label=product.name, amount=product.price * 100)],
     )

@@ -28,3 +28,15 @@ async def success_payment(message: Message):
             product.duration_days
         )
         await message.answer(f"Вот ссылка: {link}")
+    elif product.type == 'function':
+        await rq.add_user_product(
+            message.from_user.id,
+            product.code,
+            product.duration_days
+        )
+    elif product.type == 'subscription':
+        await rq.add_user_product(
+            message.from_user.id,
+            product.code,
+            product.duration_days
+        )

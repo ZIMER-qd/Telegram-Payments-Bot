@@ -1,5 +1,7 @@
+from turtle import back
+
 from sqlalchemy import BigInteger, String, ForeignKey, DateTime, Numeric, Integer
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
 from datetime import datetime, timezone
@@ -25,6 +27,8 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), 
                                                  default=lambda: datetime.now(timezone.utc))
 
+    products = relationship('UserProduct', back_populates='user')
+
 
 class Product(Base):
     __tablename__ = 'Products'
@@ -46,6 +50,9 @@ class UserProduct(Base):
     purchased_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
                                                    default=lambda: datetime.now(timezone.utc))
     expire_at: Mapped[datetime] = mapped_column(DateTime(), nullable=True)
+
+    user = relationship('User', back_populates='products')
+    product = relationship('Product')
 
 
 async def init_db():
