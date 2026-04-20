@@ -1,7 +1,7 @@
 from app.database.models import async_session
 from app.database.models import User, Product, UserProduct
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from datetime import datetime, timezone, timedelta
 from typing import List
 
@@ -30,12 +30,19 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
         async with session.begin():
             user = await session.scalar(select(User.id).where(User.tg_id == tg_id))
             product_id = await session.scalar(select(Product.id).where(Product.code == product_code))
-            result = UserProduct(
-                user_id=user,
-                product_id=product_id,
-                expire_at=future if expire else None
-            )
-            session.add(result)
+            user_product = await session.scalar(select(UserProduct)
+                                                .where(UserProduct.user_id == user)
+                                                .where(UserProduct.product_id == product_id))
+            
+            if user_product and product_code.startswith('sub'):
+                user_product.expire_at = user_product.expire_at + timedelta(days=expire)
+            else:
+                result = UserProduct(
+                    user_id=user,
+                    product_id=product_id,
+                    expire_at=future if expire else None
+                )
+                session.add(result)
 
 
 async def check_product_by_user(tg_id: int, product_code: str) -> bool:
