@@ -36,6 +36,18 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
                 expire_at=future if expire else None
             )
             session.add(result)
+
+
+async def check_product_by_user(tg_id: int, product_code: str) -> bool:
+    async with async_session() as session:
+        user_id = await session.scalar(select(User.id).where(User.tg_id == tg_id))
+        product_id = await session.scalar(select(Product.id).where(Product.code == product_code))
+        result = await session.scalar(select(UserProduct)
+                                      .where(UserProduct.user_id == user_id)
+                                      .where(UserProduct.product_id == product_id))
+        if result:
+            return True
+        return None
     
 
 async def get_all_products_by_type(type_name: str) -> List[Product]:

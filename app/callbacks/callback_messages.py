@@ -37,7 +37,12 @@ async def output_product(query: CallbackQuery, callback_data: inline.ProductType
 
 @router.callback_query(inline.ProductCode.filter())
 async def give_invoice(query: CallbackQuery, callback_data: inline.ProductCode, bot: Bot):
+    await query.answer()
     product = await rq.get_product_by_code(callback_data.code)
+    if product.type != 'channel' and product.type != 'subscription':
+        check = await rq.check_product_by_user(query.from_user.id, product.code)
+        if check:
+            return await query.message.answer("У вас уже куплена эта функция.")
 
     await bot.send_invoice(
         chat_id=query.from_user.id,
