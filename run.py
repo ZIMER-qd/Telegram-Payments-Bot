@@ -19,7 +19,12 @@ dp = Dispatcher()
 
 async def set_commands():
     commands = [
-        types.BotCommand(command='start', description='Запуск')
+        types.BotCommand(command='start', description='Запуск'),
+        types.BotCommand(command='primelink', description='Платная функция'),
+        types.BotCommand(command='game', description='Платная функция'),
+        types.BotCommand(command='secretphoto', description='Платная функция'),
+        types.BotCommand(command='sub_mode', description='Доступно по подписке'),
+        types.BotCommand(command='profile', description='Профиль'),
     ]
 
     await bot.set_my_commands(commands)
