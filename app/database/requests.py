@@ -3,10 +3,20 @@ from app.database.models import User, Product, UserProduct
 
 from sqlalchemy import delete, select, update
 from datetime import datetime, timezone, timedelta
-from typing import List
+from typing import List, Optional
 
 
 async def set_user(tg_id: int, name: str) -> None:
+    """Create user in the database.
+
+    Args:
+        tg_id (int): Telegram user ID.
+        name (str): User first name.
+    
+    Returns:
+        The function does not return anything. 
+    """
+
     async with async_session() as session:
         async with session.begin():
             user = await session.scalar(select(User).where(User.tg_id == tg_id))
@@ -20,6 +30,17 @@ async def set_user(tg_id: int, name: str) -> None:
 
 
 async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> None:
+    """Create user product in the database.
+
+    Args:
+        tg_id (int): Telegram user ID.
+        product_code (str): Product code.
+        expire (str, optional): Time when the product runs out. Defaults to None.
+
+    Returns:
+        The function does not return anything.
+    """
+
     if expire:
         now_utc = datetime.now(timezone.utc)
         future = now_utc + timedelta(days=expire)
@@ -52,6 +73,16 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
 
 
 async def check_product_by_user(tg_id: int, product_code: str) -> bool:
+    """Checking whether the user has the product.
+
+    Args:
+        tg_id (int): Telegram user ID.
+        product_code (str): Product code.
+
+    Returns:
+        bool: True if available otherwise None.
+    """
+
     async with async_session() as session:
         user_id = await session.scalar(select(User.id).where(User.tg_id == tg_id))
         product_id = await session.scalar(select(Product.id).where(Product.code == product_code))
@@ -60,22 +91,50 @@ async def check_product_by_user(tg_id: int, product_code: str) -> bool:
                                       .where(UserProduct.product_id == product_id))
         if result:
             return True
+        
         return None
     
 
 async def get_all_products_by_type(type_name: str) -> List[Product]:
+    """Get all products by type
+
+    Args:
+        type_name (str): Product type.
+
+    Returns:
+        List[Product]: A list of Product objects matching the specified type.
+    """
+
     async with async_session() as session:
         result = await session.execute(select(Product).where(Product.type == type_name))
         return result.scalars().all()
 
 
-async def get_product_by_code(code: str) -> List[Product]:
+async def get_product_by_code(code: str) -> Product:
+    """Get product by code.
+
+    Args:
+        code (str): Product code.
+
+    Returns:
+        Product: Product instance.
+    """
+
     async with async_session() as session:
-        price = await session.scalar(select(Product).where(Product.code == code))
-        return price
+        product = await session.scalar(select(Product).where(Product.code == code))
+        return product
     
 
-async def get_user_product_codes(tg_id: int) -> List[UserProduct]:
+async def get_user_product_codes(tg_id: int) -> List[str]:
+    """Get all product codes.
+
+    Args:
+        tg_id (int): Telegram user ID.
+
+    Returns:
+        List[UserProduct]: List of product codes.
+    """
+
     async with async_session() as session:
         
         products = (
@@ -89,7 +148,18 @@ async def get_user_product_codes(tg_id: int) -> List[UserProduct]:
         return result.all()
     
 
-async def get_user_purchases(tg_id: int) -> tuple[UserProduct, Product]:
+async def get_user_purchases(tg_id: int) -> tuple[List[Product], Optional[datetime]]:
+    """Retrieve user's purchased products and subscription expiration date.
+
+    Args:
+        tg_id (int): _description_
+
+    Returns:
+        tuple[List[Product], Optional[datetime]]:
+            - List of purchased function products
+            - Subscription expiration datetime (if exists)
+    """
+
     async with async_session() as session:
         
         sub = await session.scalar(
@@ -105,6 +175,7 @@ async def get_user_purchases(tg_id: int) -> tuple[UserProduct, Product]:
             .join(UserProduct)
             .join(User)
             .where(User.tg_id == tg_id)
+            .where(Product.type == 'function')
         )).all()
 
     return (funcs, sub) 

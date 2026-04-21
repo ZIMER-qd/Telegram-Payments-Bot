@@ -7,6 +7,15 @@ import logging
 
 
 async def seed_products(products: list[dict]) -> None:
+    """Checking if a product is already in the database
+
+    Args:
+        products (list[dict]): product list.
+        
+    Returns:
+        The function does not return anything.
+    """
+
     for product in products:
         exists = await get_product_by_code(product['code'])
 
@@ -14,13 +23,31 @@ async def seed_products(products: list[dict]) -> None:
             await create_product(**product)
 
 
-async def get_product_by_code(product: str) -> Product | None:
+async def get_product_by_code(product_code: str) -> Product | None:
+    """Receive the product by code
+
+    Args:
+        product_code (str): product code.
+
+    Returns:
+        Product | None: Product if is already in the database otherwise.
+    """
+
     async with async_session() as session:
-        result = await session.scalar(select(Product).where(Product.code == product))
+        result = await session.scalar(select(Product).where(Product.code == product_code))
         return result is not None
     
 
 async def create_product(**kwargs) -> None:
+    """Create new product in the database.
+
+    Args:
+        **kwargs: Product fields (must match Product model columns).
+
+    Returns:
+        The function does not return anything.
+    """
+
     async with async_session() as session:
         async with session.begin():
             try:

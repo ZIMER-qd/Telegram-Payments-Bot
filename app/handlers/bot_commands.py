@@ -8,7 +8,7 @@ from app.keyboards import inline
 from app.database import requests as rq
 
 from app.states.dice_game import DiceGame
-from app.utils.check_product import has_access
+from app.utils.validators import has_access
 from app.utils import format_text as ft
 
 router = Router()
@@ -27,6 +27,8 @@ async def start(message: Message, state: FSMContext):
 
 @router.message(Command('primelink'))
 async def primelink(message: Message, user_products: set):
+    "Test paid feature"
+
     if not has_access(user_products, 'func_2'):
        return await message.answer("У вас нет доступа к этой функции.") 
     
@@ -36,6 +38,8 @@ async def primelink(message: Message, user_products: set):
 
 @router.message(Command('game'))
 async def game(message: Message, user_products: set, state: FSMContext):
+    "Test paid feature"
+
     if not has_access(user_products, 'func_1'):
        return await message.answer("У вас нет доступа к этой функции.")
     
@@ -46,6 +50,8 @@ async def game(message: Message, user_products: set, state: FSMContext):
 
 @router.message(Command('secretphoto'))
 async def secretphoto(message: Message, user_products: set):
+    "Test paid feature"
+
     if not has_access(user_products, 'func_3'):
        return await message.answer("У вас нет доступа к этой функции.")
     photo = FSInputFile(r'D:\All_Py_Project\Python_Project\Telegram_bots\TgBot_Payments\app\data\secretphoto.jpeg')
@@ -58,6 +64,8 @@ async def secretphoto(message: Message, user_products: set):
 
 @router.message(Command('sub_mode'))
 async def sub_mode(message: Message, is_sub_active: set):
+    "Test subscription feature"
+
     if not is_sub_active:
         await message.answer("❌ У вас нет подписки")
         return
@@ -67,6 +75,8 @@ async def sub_mode(message: Message, is_sub_active: set):
 
 @router.message(Command('profile'))
 async def user_profile(message: Message):
+    "User profile"
+
     data = await rq.get_user_purchases(message.from_user.id)
     text = ft.formatting_user_status(data)
     await message.answer(text)

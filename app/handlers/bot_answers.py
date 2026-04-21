@@ -15,6 +15,8 @@ async def pre_chekout(query: PreCheckoutQuery):
 
 @router.message(F.successful_payment)
 async def success_payment(message: Message):
+    """Giving a product to the user and recording this product in the database"""
+
     code = message.successful_payment.invoice_payload
 
     product = await rq.get_product_by_code(code)

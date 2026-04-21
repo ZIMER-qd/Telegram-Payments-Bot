@@ -5,7 +5,7 @@ from app.database import requests as rq
 from datetime import datetime, timezone
 
 
-class SubIncluded(BaseMiddleware):
+class SubVerify(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[[Any, Dict[str, Any]], Awaitable[Any]],

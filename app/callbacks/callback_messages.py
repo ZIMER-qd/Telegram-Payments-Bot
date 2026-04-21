@@ -14,6 +14,8 @@ router = Router()
 
 @router.callback_query(F.data == 'back')
 async def get_back(query: CallbackQuery):
+    """Return to menu"""
+
     text = "Здравствуйте\n\n" \
            "Это тестовый бот <b>Payments</b>\n" \
            "Какие есть возможности:\n"
@@ -22,6 +24,8 @@ async def get_back(query: CallbackQuery):
 
 @router.callback_query(inline.ProductType.filter())
 async def output_product(query: CallbackQuery, callback_data: inline.ProductType):
+    """Display tariffs by product type"""
+
     data = await rq.get_all_products_by_type(callback_data.name)
     text = ''
 
@@ -37,6 +41,8 @@ async def output_product(query: CallbackQuery, callback_data: inline.ProductType
 
 @router.callback_query(inline.ProductCode.filter())
 async def give_invoice(query: CallbackQuery, callback_data: inline.ProductCode, bot: Bot):
+    """Display invoice or a message that the product has already been purchased"""
+
     await query.answer()
     product = await rq.get_product_by_code(callback_data.code)
     if product.type != 'channel' and product.type != 'subscription':

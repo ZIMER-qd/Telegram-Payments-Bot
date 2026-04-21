@@ -2,12 +2,11 @@ import asyncio
 import logging
 from aiogram import Dispatcher, types
 from app.services.bot_instance import bot
-from app.middlwares.access_function import AccessFunction
+from app.middlewares import middlewares
 
-from app.handlers.bot_commands import router as commands_router
-from app.callbacks.callback_messages import router as callback_router
-from app.handlers.bot_answers import router as answer_router
-from app.filters.fsm_message import router as fsmessage_router
+from app.handlers import command_router, answer_router
+from app.callbacks import callback_router
+from app.states import fsmessage_router
 
 from app.database.models import init_db
 from app.database.create_products import seed_products
@@ -34,11 +33,12 @@ async def main():
 
     await seed_products(products)
 
-    dp.message.middleware(AccessFunction())
-    dp.callback_query.middleware(AccessFunction())
+    for mw in middlewares:
+        dp.message.middleware(mw)
+        dp.callback_query.middleware(mw)
 
     dp.include_routers(
-        commands_router,
+        command_router,
         callback_router,
         answer_router,
         fsmessage_router

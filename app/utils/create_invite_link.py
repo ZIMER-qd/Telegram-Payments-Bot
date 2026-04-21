@@ -2,6 +2,8 @@ from aiogram import Bot
 
 
 async def create_link(bot: Bot):
+    "Creating an invitation link to a private channel"
+
     invite = await bot.create_chat_invite_link(
         chat_id=-1003835688732,
         member_limit=1
