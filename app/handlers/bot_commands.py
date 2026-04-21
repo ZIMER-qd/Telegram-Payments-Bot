@@ -9,6 +9,7 @@ from app.database import requests as rq
 
 from app.states.dice_game import DiceGame
 from app.utils.check_product import has_access
+from app.utils import format_text as ft
 
 router = Router()
 
@@ -53,3 +54,10 @@ async def secretphoto(message: Message, user_products: set):
         photo=photo,
         caption="Секретное фото"
     ) 
+
+
+@router.message(Command('profile'))
+async def user_profile(message: Message):
+    data = await rq.get_user_purchases(message.from_user.id)
+    text = ft.formatting_user_status(data)
+    await message.answer(text)

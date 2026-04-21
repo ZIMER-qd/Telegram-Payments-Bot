@@ -5,8 +5,6 @@ from sqlalchemy import delete, select, update
 from datetime import datetime, timezone, timedelta
 from typing import List
 
-import logging
-
 
 async def set_user(tg_id: int, name: str) -> None:
     async with async_session() as session:
@@ -28,21 +26,29 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
 
     async with async_session() as session:
         async with session.begin():
-            user = await session.scalar(select(User.id).where(User.tg_id == tg_id))
-            product_id = await session.scalar(select(Product.id).where(Product.code == product_code))
-            user_product = await session.scalar(select(UserProduct)
-                                                .where(UserProduct.user_id == user)
-                                                .where(UserProduct.product_id == product_id))
+            user_id = await session.scalar(select(User.id).where(User.tg_id == tg_id))
+            product = await session.scalar(select(Product).where(Product.code == product_code))
             
-            if user_product and product_code.startswith('sub'):
-                user_product.expire_at = user_product.expire_at + timedelta(days=expire)
+            if product.type == 'subscription':
+                user_sub = await session.scalar(select(UserProduct)
+                                                .join(Product)
+                                                .where(UserProduct.user_id == user_id)
+                                                .where(Product.type == 'subscription'))
+                
+                if user_sub:
+                    user_sub.expire_at = user_sub.expire_at + timedelta(days=expire)
+                else:
+                    session.add(UserProduct(
+                        user_id=user_id,
+                        product_id=product.id,
+                        expire_at=future
+                    ))
             else:
-                result = UserProduct(
-                    user_id=user,
-                    product_id=product_id,
+                session.add(UserProduct(
+                    user_id=user_id,
+                    product_id=product.id,
                     expire_at=future if expire else None
-                )
-                session.add(result)
+                ))
 
 
 async def check_product_by_user(tg_id: int, product_code: str) -> bool:
@@ -81,3 +87,24 @@ async def get_user_product_codes(tg_id: int) -> List[UserProduct]:
 
         result = await session.scalars(products)
         return result.all()
+    
+
+async def get_user_purchases(tg_id: int) -> tuple[UserProduct, Product]:
+    async with async_session() as session:
+        
+        sub = await session.scalar(
+            select(UserProduct.expire_at)
+            .join(Product)
+            .join(User)
+            .where(User.tg_id == tg_id)
+            .where(Product.type == 'subscription')
+        )
+
+        funcs = (await session.scalars(
+            select(Product)
+            .join(UserProduct)
+            .join(User)
+            .where(User.tg_id == tg_id)
+        )).all()
+
+    return (funcs, sub) 
