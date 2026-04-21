@@ -49,7 +49,7 @@ class UserProduct(Base):
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.id'))
     purchased_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
                                                    default=lambda: datetime.now(timezone.utc))
-    expire_at: Mapped[datetime] = mapped_column(DateTime(), nullable=True)
+    expire_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     user = relationship('User', back_populates='products')
     product = relationship('Product')

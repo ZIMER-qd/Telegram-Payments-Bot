@@ -15,8 +15,13 @@ class SubVerify(BaseMiddleware):
         user_tg_id = event.from_user.id
         user_sub = await rq.get_user_purchases(user_tg_id)
         now_utc = datetime.now(timezone.utc)
-        
-        is_active = bool(user_sub[1]) and now_utc <= user_sub[1]
+
+        expire = user_sub[1]
+
+        if expire and expire.tzinfo is None:
+            expire = expire.replace(tzinfo=timezone.utc)
+
+        is_active = bool(user_sub[1]) and now_utc <= expire
         
         data["is_sub_active"] = is_active
 

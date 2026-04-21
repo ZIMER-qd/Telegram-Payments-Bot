@@ -29,7 +29,7 @@ async def set_user(tg_id: int, name: str) -> None:
                 session.add(result)
 
 
-async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> None:
+async def add_user_product(tg_id: int, product_code: str, expire: int=None) -> None:
     """Create user product in the database.
 
     Args:
@@ -41,6 +41,7 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
         The function does not return anything.
     """
 
+    future = None
     if expire:
         now_utc = datetime.now(timezone.utc)
         future = now_utc + timedelta(days=expire)
@@ -57,6 +58,11 @@ async def add_user_product(tg_id: int, product_code: str, expire: str=None) -> N
                                                 .where(Product.type == 'subscription'))
                 
                 if user_sub:
+                    expire_at = user_sub.expire_at
+
+                    if expire_at and expire_at.tzinfo is None:
+                        expire_at = expire_at.replace(tzinfo=timezone.utc)
+                        
                     user_sub.expire_at = user_sub.expire_at + timedelta(days=expire)
                 else:
                     session.add(UserProduct(
