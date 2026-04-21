@@ -56,6 +56,15 @@ async def secretphoto(message: Message, user_products: set):
     ) 
 
 
+@router.message(Command('sub_mode'))
+async def sub_mode(message: Message, is_sub_active: set):
+    if not is_sub_active:
+        await message.answer("❌ У вас нет подписки")
+        return
+    
+    await message.answer("Включен sub mode")
+
+
 @router.message(Command('profile'))
 async def user_profile(message: Message):
     data = await rq.get_user_purchases(message.from_user.id)
