@@ -4,8 +4,8 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram import Bot, Router, F
 from aiogram.types import CallbackQuery, LabeledPrice
 
-from app.database import requests as rq
-from app.keyboards import inline
+from app.api.services import requests as rq
+from app.bot.keyboards import inline
 
 from config import config 
 

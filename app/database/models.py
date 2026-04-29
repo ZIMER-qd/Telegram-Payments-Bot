@@ -1,17 +1,15 @@
-from turtle import back
-
 from sqlalchemy import BigInteger, String, ForeignKey, DateTime, Numeric, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 
 from datetime import datetime, timezone
-from pathlib import Path
+from config import config
 
-BASE = Path.cwd()
-DB_PATH = BASE / 'db.sqlite3'
 
-engine = create_async_engine(url=f'sqlite+aiosqlite:///{DB_PATH}')
-async_session = async_sessionmaker(engine)
+DB_URL = f"postgresql+asyncpg://postgres:{config.postgre_pass.get_secret_value()}@localhost:5432/mydatabase"
+
+engine = create_async_engine(url=DB_URL)
+async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 class Base(AsyncAttrs, DeclarativeBase):

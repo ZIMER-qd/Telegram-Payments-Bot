@@ -2,14 +2,14 @@ from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from app.services.bot_instance import bot
+from app.bot.core.bot_instance import bot
 
-from app.keyboards import inline
+from app.bot.keyboards import inline
 from app.database import requests as rq
 
-from app.states.dice_game import DiceGame
-from app.utils.validators import has_access
-from app.utils import format_text as ft
+from app.bot.states.dice_game import DiceGame
+from app.bot.utils.validators import has_access
+from app.bot.utils import format_text as ft
 
 router = Router()
 

@@ -1,12 +1,12 @@
 import asyncio
 import logging
 from aiogram import Dispatcher, types
-from app.services.bot_instance import bot
-from app.middlewares import middlewares
+from app.bot.core.bot_instance import bot
+from app.bot.middlewares import middlewares
 
-from app.handlers import command_router, answer_router
-from app.callbacks import callback_router
-from app.states import fsmessage_router
+from app.bot.handlers import command_router, answer_router
+from app.bot.callbacks import callback_router
+from app.bot.states import fsmessage_router
 
 from app.database.models import init_db
 from app.database.create_products import seed_products
@@ -30,7 +30,7 @@ async def set_commands():
     await bot.set_my_commands(commands)
 
 
-async def main():
+async def startup():
     try:
         await init_db()
     except Exception as e:
@@ -51,6 +51,15 @@ async def main():
 
     await set_commands()
     await bot.delete_webhook(drop_pending_updates=True)
+
+
+async def shutdown():
+    ...
+
+
+async def main():
+    await startup()
+
     await dp.start_polling(bot)
    
 

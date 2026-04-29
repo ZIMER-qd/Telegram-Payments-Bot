@@ -1,8 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, PreCheckoutQuery
 
-from app.database import requests as rq
-from app.utils.create_invite_link import create_link
+from app.api.services import requests as rq
+from app.bot.utils.create_invite_link import create_link
 
 
 router = Router()
