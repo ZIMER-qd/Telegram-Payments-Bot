@@ -4,7 +4,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters.callback_data import CallbackData
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder 
-from app.database import requests as rq
+from app.api.services import requests as rq
 
 
 class ProductType(CallbackData, prefix='types'):

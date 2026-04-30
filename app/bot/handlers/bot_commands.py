@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from app.bot.core.bot_instance import bot
 
 from app.bot.keyboards import inline
-from app.database import requests as rq
+from app.api.services import requests as rq
 
 from app.bot.states.dice_game import DiceGame
 from app.bot.utils.validators import has_access

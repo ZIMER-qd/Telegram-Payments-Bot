@@ -6,5 +6,5 @@ router = APIRouter(prefix="/sub", tags=["Subscriptions"])
 
 
 @router.delete("/del")
-async def delete_user_sub(tg_id: int, product_id: int, db : AsyncSession = Depends(get_db)):
+async def delete_user_sub(tg_id: int, db : AsyncSession = Depends(get_db)):
     ...

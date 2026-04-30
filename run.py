@@ -2,15 +2,13 @@ import asyncio
 import logging
 from aiogram import Dispatcher, types
 from app.bot.core.bot_instance import bot
+from app.bot.core.http_client import create_http_client, close_http_client
 from app.bot.middlewares import middlewares
 
 from app.bot.handlers import command_router, answer_router
 from app.bot.callbacks import callback_router
 from app.bot.states import fsmessage_router
 
-from app.database.models import init_db
-from app.database.create_products import seed_products
-from app.database.seed import products
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -31,12 +29,7 @@ async def set_commands():
 
 
 async def startup():
-    try:
-        await init_db()
-    except Exception as e:
-        logging.warning(f"Database initialization failed: {e}")
-
-    await seed_products(products)
+    await create_http_client()
 
     for mw in middlewares:
         dp.message.middleware(mw)
@@ -54,7 +47,7 @@ async def startup():
 
 
 async def shutdown():
-    ...
+    await close_http_client()
 
 
 async def main():
