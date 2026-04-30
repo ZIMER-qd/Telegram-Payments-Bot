@@ -31,6 +31,6 @@ def has_access(products: set, code: str) -> bool:
         bool: True if the user has access to the function
         (either directly or via 'func_all'), otherwise False.
     """
-
-    result = code in products or 'func_all' in products
+    
+    result = any(item['code'] == code or item['code'] == 'func_all' for item in products)
     return result

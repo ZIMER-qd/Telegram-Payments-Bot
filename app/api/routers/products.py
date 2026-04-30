@@ -44,6 +44,6 @@ async def get_products_by_type(type_name: str, db : AsyncSession = Depends(get_d
 
 
 @router.get("/user/by_codes", response_model=List[UserProductCodes])
-async def get_user_product_codes(tg_id: int, db : AsyncSession = Depends(get_db)):
+async def get_user_product_codes(tg_id: int, db: AsyncSession = Depends(get_db)):
     result = await rq.get_user_product_codes(db, tg_id)
     return result

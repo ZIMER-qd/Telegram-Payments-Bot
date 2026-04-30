@@ -2,6 +2,7 @@ from aiogram import BaseMiddleware
 from typing import Callable, Dict, Any, Awaitable
 
 from app.api.services import requests as rq
+from app.bot.services import api_requests as api_rq
 
 
 class AccessFunction(BaseMiddleware):
@@ -12,8 +13,8 @@ class AccessFunction(BaseMiddleware):
             data: Dict[str, Any]
     ):
         user_tg_id = event.from_user.id
-        user_products = await rq.get_user_product_codes(user_tg_id)
+        user_products = await api_rq.get_user_product_codes(user_tg_id)
 
-        data['user_products'] = set(user_products)
+        data['user_products'] = user_products
 
         return await handler(event, data)

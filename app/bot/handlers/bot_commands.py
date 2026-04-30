@@ -5,8 +5,8 @@ from aiogram.fsm.context import FSMContext
 from app.bot.core.bot_instance import bot
 
 from app.bot.keyboards import inline
-from app.api.services import requests as rq
 
+from app.bot.services import api_requests as api_rq
 from app.bot.states.dice_game import DiceGame
 from app.bot.utils.validators import has_access
 from app.bot.utils import format_text as ft
@@ -17,7 +17,7 @@ router = Router()
 async def start(message: Message, state: FSMContext):
     """Launching and welcoming the bot"""
 
-    await rq.set_user(message.from_user.id, message.from_user.first_name)
+    await api_rq.create_user(message.from_user.id, message.from_user.first_name)
     await state.clear()
     text = "Здравствуйте\n\n" \
            "Это тестовый бот <b>Payments</b>\n" \
@@ -77,6 +77,6 @@ async def sub_mode(message: Message, is_sub_active: set):
 async def user_profile(message: Message):
     "User profile"
 
-    data = await rq.get_user_purchases(message.from_user.id)
+    data = await api_rq.get_user_purchases(message.from_user.id)
     text = ft.formatting_user_status(data)
     await message.answer(text)
