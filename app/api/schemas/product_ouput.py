@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
 
 
 class ProductOut(BaseModel):
@@ -18,6 +18,4 @@ class CheckUserProduct(BaseModel):
 
 
 class UserProductCodes(BaseModel):
-    code: str
-
-    model_config = ConfigDict(from_attributes=True)
+    codes: List[str]

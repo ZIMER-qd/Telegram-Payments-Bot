@@ -5,6 +5,7 @@ from aiogram import Bot, Router, F
 from aiogram.types import CallbackQuery, LabeledPrice
 
 from app.api.services import requests as rq
+from app.bot.services import api_requests as api_rq
 from app.bot.keyboards import inline
 
 from config import config 
@@ -26,11 +27,11 @@ async def get_back(query: CallbackQuery):
 async def output_product(query: CallbackQuery, callback_data: inline.ProductType):
     """Display tariffs by product type"""
 
-    data = await rq.get_all_products_by_type(callback_data.name)
+    data = await api_rq.get_products_by_type(callback_data.name)
     text = ''
 
     for product in data:
-        text += f'{product.name} - {product.price} UAH.\n'
+        text += f'{product["name"]} - {product["price"]} UAH.\n'
     with suppress(TelegramBadRequest):   
         await query.message.edit_text(
             f"Выберите тариф:\n\n{text}",
@@ -44,18 +45,18 @@ async def give_invoice(query: CallbackQuery, callback_data: inline.ProductCode, 
     """Display invoice or a message that the product has already been purchased"""
 
     await query.answer()
-    product = await rq.get_product_by_code(callback_data.code)
-    if product.type != 'channel' and product.type != 'subscription':
-        check = await rq.check_product_by_user(query.from_user.id, product.code)
-        if check:
+    product = await api_rq.get_product_by_code(callback_data.code)
+    if product["type"] != 'channel' and product["type"] != 'subscription':
+        check = await api_rq.check_user_product(query.from_user.id, product["code"])
+        if check["value"]:
             return await query.message.answer("У вас уже куплена эта функция.")
 
     await bot.send_invoice(
         chat_id=query.from_user.id,
-        title=product.name,
+        title=product["name"],
         description='Оплата',
-        payload=product.code,
+        payload=product["code"],
         provider_token=config.provider_token.get_secret_value(),
         currency='UAH',
-        prices=[LabeledPrice(label=product.name, amount=product.price * 100)],
+        prices=[LabeledPrice(label=product["name"], amount=product["price"] * 100)],
     )

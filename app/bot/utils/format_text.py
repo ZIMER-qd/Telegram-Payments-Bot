@@ -3,7 +3,7 @@ from datetime import datetime
 from app.database.models import Product
 from typing import Tuple, List, Optional
 
-def formatting_user_status(data: Tuple[List[Product], Optional[datetime]]) -> str:
+def formatting_user_status(data: dict[List[Product], Optional[datetime]]) -> str:
     """Format user profile information for display.
 
     Args:
@@ -14,7 +14,7 @@ def formatting_user_status(data: Tuple[List[Product], Optional[datetime]]) -> st
     Returns:
         str: Formatted profile text.
     """
-    funcs, sub_expire = data
+    funcs, sub_expire = data['funcs'], datetime.fromisoformat(data["subscription"].replace('Z', '+00:00'))
 
     text = f"Профиль:\n" 
     
@@ -28,7 +28,7 @@ def formatting_user_status(data: Tuple[List[Product], Optional[datetime]]) -> st
     
     if funcs:
         for func in funcs:
-            text += f"- {func.name}\n"
+            text += f"- {func["name"]}\n"
 
     return text
         

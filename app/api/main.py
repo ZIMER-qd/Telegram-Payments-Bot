@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(app: FastAPI):
     try:
         await init_db()
         logging.info("Database initialized")

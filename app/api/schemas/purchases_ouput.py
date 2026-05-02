@@ -5,5 +5,5 @@ from app.api.schemas.product_ouput import ProductOut
 
 
 class UserPurchasesOut(BaseModel):
-    products: List[ProductOut]
-    expire: Optional[datetime] = None
+    funcs: List[ProductOut]
+    subscription: Optional[datetime] = None

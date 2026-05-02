@@ -25,8 +25,8 @@ async def close_http_client():
         logging.info("Session connection closed")
 
 
-# async def get_client():
-#     if client is None:
-#         raise RuntimeError("HTTP client is not initialized")
+async def get_client():
+    if client is None:
+        raise RuntimeError("HTTP client is not initialized")
     
-#     return client
+    return client

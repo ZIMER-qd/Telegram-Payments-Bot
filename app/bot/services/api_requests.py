@@ -1,12 +1,14 @@
 import logging
 
-from app.bot.core.http_client import client
+from app.bot.core.http_client import get_client
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 # products
 async def create_user_product(tg_id: int, product_code: str, expire: int | None) -> dict | None:
+    client = await get_client()
+    
     response = await client.post(
         "/products/add", 
         json={
@@ -24,6 +26,8 @@ async def create_user_product(tg_id: int, product_code: str, expire: int | None)
 
 
 async def get_product_by_code(code: str) -> dict | None:
+    client = await get_client()
+    
     response = await client.get(
         "/products/by_code",
         params={
@@ -39,6 +43,8 @@ async def get_product_by_code(code: str) -> dict | None:
 
 
 async def check_user_product(tg_id: int, product_code: int) -> dict | None:
+    client = await get_client()
+    
     response = await client.get(
         "/products/check",
         params={
@@ -54,7 +60,9 @@ async def check_user_product(tg_id: int, product_code: int) -> dict | None:
     return response.json()
 
 
-async def get_products_by_type(type_name: str) -> dict | None:
+async def get_products_by_type(type_name: str) -> list[dict] | None:
+    client = await get_client()
+    
     response = await client.get(
         "/products/by_type",
         params={
@@ -69,7 +77,9 @@ async def get_products_by_type(type_name: str) -> dict | None:
     return response.json()
 
 
-async def get_user_product_codes(tg_id: int) -> dict | None:
+async def get_user_product_codes(tg_id: int) -> list[dict] | None:
+    client = await get_client()
+    
     response = await client.get(
         "/products/user/by_codes",
         params={
@@ -86,6 +96,8 @@ async def get_user_product_codes(tg_id: int) -> dict | None:
 
 # purchases
 async def get_user_purchases(tg_id: int) -> dict | None:
+    client = await get_client()
+    
     response = await client.get(
         "/purchases/user",
         params={
@@ -101,6 +113,8 @@ async def get_user_purchases(tg_id: int) -> dict | None:
 
 # users
 async def create_user(tg_id: int, name: str) -> dict | None:
+    client = await get_client()
+    
     response = await client.post(
         "/users/add",
         json={
@@ -117,6 +131,8 @@ async def create_user(tg_id: int, name: str) -> dict | None:
 
 # subscriptions
 async def delete_user_sub(tg_id: int) -> dict | None:
+    client = await get_client()
+    
     response = await client.delete(
         "/sub/del",
         params={
@@ -128,4 +144,4 @@ async def delete_user_sub(tg_id: int) -> dict | None:
         logging.warning(f"API error {response.status_code}: {response.text}")
         return None
     
-    return response
+    return response.json()

@@ -4,8 +4,8 @@ from aiogram import Router
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from app.states.dice_game import DiceGame
-from app.utils.validators import check_number
+from app.bot.states.dice_game import DiceGame
+from app.bot.utils.validators import check_number
 
 
 router = Router()

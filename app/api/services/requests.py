@@ -38,15 +38,15 @@ async def set_user(session: AsyncSession, tg_id: int, name: str) -> None:
         The function does not return anything. 
     """
 
-    async with session.begin():
-        user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        
-        if not user:
-            result = User(
-                tg_id=tg_id,
-                name=name
-            )
-            session.add(result)
+    user = await session.scalar(select(User).where(User.tg_id == tg_id))
+    
+    if not user:
+        result = User(
+            tg_id=tg_id,
+            name=name
+        )
+        session.add(result)
+        await session.commit()
     
 
 async def add_user_product(session: AsyncSession, tg_id: int, product_code: str, expire: int=None) -> None:
@@ -197,3 +197,16 @@ async def get_user_purchases(session: AsyncSession, tg_id: int) -> tuple[List[Pr
     )).all()
 
     return (funcs, sub) 
+
+
+async def delete_user_sub(session: AsyncSession, tg_id: int) -> None:
+    user_id = await session.scalar(select(User.id).where(User.tg_id == tg_id))
+    product_ids = (await session.scalars(select(Product.id).where(Product.code.startswith('sub')))).all()
+
+    result = (
+        delete(UserProduct)
+        .where(UserProduct.user_id == user_id)
+        .where(UserProduct.product_id.in_(product_ids)))
+
+    await session.execute(result)
+    await session.commit()

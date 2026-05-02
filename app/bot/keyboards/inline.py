@@ -1,10 +1,8 @@
-from ast import Call
-
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters.callback_data import CallbackData
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder 
-from app.api.services import requests as rq
+from app.bot.services import api_requests as api_rq
 
 
 class ProductType(CallbackData, prefix='types'):
@@ -23,13 +21,13 @@ class ProductCode(CallbackData, prefix='subs'):
 
 
 async def output_products(type_name: str):
-    products = await rq.get_all_products_by_type(type_name)
+    products = await api_rq.get_products_by_type(type_name)
     builder = InlineKeyboardBuilder()
     
     for product in products:
         builder.button(
-            text=product.name, 
-            callback_data=ProductCode(code=product.code).pack()
+            text=product["name"], 
+            callback_data=ProductCode(code=product["code"]).pack()
         )
     builder.button(
         text='🔙 Назад',

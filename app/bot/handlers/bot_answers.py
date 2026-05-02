@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, PreCheckoutQuery
 
 from app.api.services import requests as rq
+from app.bot.services import api_requests as api_rq
 from app.bot.utils.create_invite_link import create_link
 
 
@@ -19,26 +20,26 @@ async def success_payment(message: Message):
 
     code = message.successful_payment.invoice_payload
 
-    product = await rq.get_product_by_code(code)
+    product = await api_rq.get_product_by_code(code)
 
-    if product.type == 'channel':
+    if product["type"] == 'channel':
         link = await create_link(message.bot)
 
-        await rq.add_user_product(
+        await api_rq.create_user_product(
             message.from_user.id,
-            product.code,
-            product.duration_days
+            product["code"],
+            product["duration_days"]
         )
         await message.answer(f"Вот ссылка: {link}")
-    elif product.type == 'function':
-        await rq.add_user_product(
+    elif product["type"] == 'function':
+        await api_rq.create_user_product(
             message.from_user.id,
-            product.code,
-            product.duration_days
+            product["code"],
+            product["duration_days"]
         )
-    elif product.type == 'subscription':
-        await rq.add_user_product(
+    elif product["type"] == 'subscription':
+        await api_rq.create_user_product(
             message.from_user.id,
-            product.code,
-            product.duration_days
+            product["code"],
+            product["duration_days"]
         )

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/add")
-async def create_user(data: user.User, db : AsyncSession = Depends(get_db)) -> None:
+async def create_user(data: user.User, db : AsyncSession = Depends(get_db)) -> dict:
     user = await rq.get_user(db, data.tg_id)
 
     if user:

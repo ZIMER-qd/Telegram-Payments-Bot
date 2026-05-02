@@ -32,5 +32,5 @@ def has_access(products: set, code: str) -> bool:
         (either directly or via 'func_all'), otherwise False.
     """
     
-    result = any(item['code'] == code or item['code'] == 'func_all' for item in products)
+    result = any(item == code or item == 'func_all' for item in products["codes"])
     return result
