@@ -1,4 +1,4 @@
-# Telegram-Payment-Bot
+# Telegram-Payment-Bot with FastAPI
 ### Description:
 - This is a test bot that has paid features, subscription functionality,  
   and the ability to purchase a link to a private channel.
@@ -13,6 +13,12 @@
 - aiogram
 - SQLAlchemy
 - pydantic-settings
+- pydantic
+- fastapi
+- uvicorn
+- httpx
+- asyncpg
+- alembic
 ### Installation:
 #### 1. Clone the repository:  
 git clone https://github.com/ZIMER-qd/Telegram-Payments-Bot.git  
@@ -25,6 +31,7 @@ source .venv/bin/activate - Linux / Mac
 pip install -r requirements.txt  
 #### 4. Configure the .env file with the bot token:  
 BOT_TOKEN=token
-PROVIDER_TOKEN=provider_token (You can find it in BotFather in the Payments section after connecting a payment provider.)  
+PROVIDER_TOKEN=provider_token (You can find it in BotFather in the Payments section after connecting a payment provider.)
+POSTGRE_PASS=password (Your password for working with PostgreSQL, before running the program, you need to create a database, this can be done through pgAdmin)  
 #### 5. Run the bot:  
 python run.py

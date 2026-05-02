@@ -1,7 +1,6 @@
 from aiogram import BaseMiddleware
 from typing import Callable, Dict, Any, Awaitable
 
-from app.api.services.requests import delete_user_sub
 from app.bot.services import api_requests as api_rq
 from datetime import datetime, timezone
 

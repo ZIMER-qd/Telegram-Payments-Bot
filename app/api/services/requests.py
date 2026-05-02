@@ -8,15 +8,15 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def get_user(session: AsyncSession, tg_id: int):
-    """_summary_
+async def get_user(session: AsyncSession, tg_id: int) -> bool:
+    """Get user from database.
 
     Args:
-        session (AsyncSession): _description_
-        tg_id (int): _description_
+        session (AsyncSession): SQLAlchemy async session for working with a database.
+        tg_id (int): Telegram user ID.
 
     Returns:
-        _type_: _description_
+        _type_: False if user not exist otherwise True.
     """
 
     user = await session.scalar(select(User).where(User.tg_id == tg_id))
@@ -31,6 +31,7 @@ async def set_user(session: AsyncSession, tg_id: int, name: str) -> None:
     """Create user in the database.
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         tg_id (int): Telegram user ID.
         name (str): User first name.
     
@@ -53,6 +54,7 @@ async def add_user_product(session: AsyncSession, tg_id: int, product_code: str,
     """Create user product in the database.
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         tg_id (int): Telegram user ID.
         product_code (str): Product code.
         expire (str, optional): Time when the product runs out. Defaults to None.
@@ -101,6 +103,7 @@ async def check_product_by_user(session: AsyncSession, tg_id: int, product_code:
     """Checking whether the user has the product.
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         tg_id (int): Telegram user ID.
         product_code (str): Product code.
 
@@ -123,6 +126,7 @@ async def get_all_products_by_type(session: AsyncSession, type_name: str) -> Lis
     """Get all products by type
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         type_name (str): Product type.
 
     Returns:
@@ -137,6 +141,7 @@ async def get_product_by_code(session: AsyncSession, code: str) -> Product:
     """Get product by code.
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         code (str): Product code.
 
     Returns:
@@ -151,6 +156,7 @@ async def get_user_product_codes(session: AsyncSession, tg_id: int) -> List[str]
     """Get all product codes.
 
     Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
         tg_id (int): Telegram user ID.
 
     Returns:
@@ -172,7 +178,8 @@ async def get_user_purchases(session: AsyncSession, tg_id: int) -> tuple[List[Pr
     """Retrieve user's purchased products and subscription expiration date.
 
     Args:
-        tg_id (int): _description_
+        session (AsyncSession): SQLAlchemy async session for working with a database.
+        tg_id (int): Telegram user ID.
 
     Returns:
         tuple[List[Product], Optional[datetime]]:
@@ -200,6 +207,16 @@ async def get_user_purchases(session: AsyncSession, tg_id: int) -> tuple[List[Pr
 
 
 async def delete_user_sub(session: AsyncSession, tg_id: int) -> None:
+    """Deletes a user's subscription.
+
+    Args:
+        session (AsyncSession): SQLAlchemy async session for working with a database.
+        tg_id (int): Telegram user ID.
+
+    Returns:
+        The function does not return anything.
+    """
+
     user_id = await session.scalar(select(User.id).where(User.tg_id == tg_id))
     product_ids = (await session.scalars(select(Product.id).where(Product.code.startswith('sub')))).all()
 

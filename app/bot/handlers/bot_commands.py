@@ -1,8 +1,7 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from app.bot.core.bot_instance import bot
 
 from app.bot.keyboards import inline
 

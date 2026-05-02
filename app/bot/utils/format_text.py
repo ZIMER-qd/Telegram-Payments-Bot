@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.database.models import Product
-from typing import Tuple, List, Optional
+from typing import List, Optional
 
 def formatting_user_status(data: dict[List[Product], Optional[datetime]]) -> str:
     """Format user profile information for display.
