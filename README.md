@@ -30,8 +30,8 @@ source .venv/bin/activate - Linux / Mac
 #### 3. Install dependencies:  
 pip install -r requirements.txt  
 #### 4. Configure the .env file with the bot token:  
-BOT_TOKEN=token
-PROVIDER_TOKEN=provider_token (You can find it in BotFather in the Payments section after connecting a payment provider.)
+BOT_TOKEN=token  
+PROVIDER_TOKEN=provider_token (You can find it in BotFather in the Payments section after connecting a payment provider.)  
 POSTGRE_PASS=password (Your password for working with PostgreSQL, before running the program, you need to create a database, this can be done through pgAdmin)  
 #### 5. Run the bot:  
 python run.py
